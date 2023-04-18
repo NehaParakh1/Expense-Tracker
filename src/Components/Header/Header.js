@@ -10,7 +10,7 @@ const Header = () => {
   }
     return(
             <>
-              <nav className="navbar navbar-expand-lg bg-dark">
+              <nav className="navbar navbar-expand-lg bg-light variant-dark">
                 <div className="collapse navbar-collapse justify-content-between">
                   <h2 className="bg-light">Expense Tracker</h2>
                   <ul className="navbar-nav mx-auto ">
@@ -23,6 +23,7 @@ const Header = () => {
                   </Button>}
                 </div>
               </nav>
+              <hr/>
             </>
           );
         };
