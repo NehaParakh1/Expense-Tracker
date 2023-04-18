@@ -7,6 +7,7 @@ const Profile = () => {
   const history = useHistory();
   const nameInputRef = useRef();
   const photoInputRef = useRef();
+
   console.log(localStorage.getItem("token"))
   const submitHandler = async (event) => {
     event.preventDefault()
@@ -36,6 +37,8 @@ const Profile = () => {
       if(res.ok){
         alert("Date Updated Successfully")
        // history.replace('/home')
+      }else{
+        throw data.error
       }
     } catch (err) {
       alert(err.message);
@@ -46,7 +49,8 @@ const Profile = () => {
     async function getData() {
       try {
         const res = await fetch(
-          "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyCL88vedXWOxULmjMSR9-1BKz0CXh_xbIg",{
+          "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyCL88vedXWOxULmjMSR9-1BKz0CXh_xbIg",
+          {
             method: "POST",
             body: JSON.stringify({
                 idToken: localStorage.getItem("token")
@@ -54,8 +58,11 @@ const Profile = () => {
           }
         );
         const data = await res.json()
+        if(res.ok){
         nameInputRef.current.value = data.users[0].displayName
         photoInputRef.current.value = data.users[0].photoUrl
+        
+        }
         console.log(data)
       } catch (err) {
         alert(err.message);
@@ -64,14 +71,45 @@ const Profile = () => {
     getData()
   }, []);
 
+  const verifyEmailHandler = async (event) => {
+    event.preventDefault();
+    try {
+      const res = await fetch(
+        "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyCL88vedXWOxULmjMSR9-1BKz0CXh_xbIg", {
+            method: 'POST',
+            body: JSON.stringify({
+                requestType: "VERIFY_EMAIL",
+                idToken: localStorage.getItem('token')
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+      );
+      const data = await res.json()
+      console.log(data.token)
+      if(res.ok){
+        alert('Verification mail is sent, please check your mail')
+        history.replace('/home')
+      }else{
+        alert('Email is not verified')
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   return (
     <>
-      <h4>Winners Never Quit, Quitters Never Win</h4>
+      <h4  style={{ textAlign: "left" }}>
+        Winners Never Quit, Quitters Never Win
+        </h4>
       <p style={{ textAlign: "right" }}>
         Your Profile is 64% complete, A complete profile has higher chances to
         land a job <Link to="/profile">Complete now</Link>
       </p>
       <hr />
+      <Button onClick={verifyEmailHandler}>Verify Email</Button>
       <section className={classes.profile}>
         <form onSubmit={submitHandler}>
           <h4>Contact Detail</h4>
