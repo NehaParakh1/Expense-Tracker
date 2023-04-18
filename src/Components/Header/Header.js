@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 const Header = () => {
   const authCtx = useContext(AuthContext)
   const logoutHandler = () => {
-    authCtx.logout()
+    authCtx.logout();
   }
     return(
             <>
