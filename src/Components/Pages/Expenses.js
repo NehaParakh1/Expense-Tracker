@@ -1,111 +1,193 @@
-import React, { useState,useRef,useEffect } from "react";
-import './Expenses.css'
-import ExpensesItem from "../Expenses/ExpensesItem";
+import { useState, useEffect, useContext } from 'react';
+import AuthContext from '../Store/AuthContext';
+import { Table } from 'react-bootstrap';
+import './Expenses.css';
 
 const Expenses = () => {
-    const amountInputRef = useRef();
-    const descriptionInputRef = useRef();
-    const categoryInputRef = useRef();
-    
-    const Dummy_Expenses = [];
-    const [expenses, setExpenses] = useState(Dummy_Expenses);
+  const authCtx = useContext(AuthContext);
+  const [data, setUserData] = useState([]);
+  const [amount, setAmount] = useState('');
+  const [description, setDescription] = useState('');
+  const [category, setCategory] = useState('');
+  const [id, setId] = useState(null);
+  const [isEditing, setisEditting] = useState(false);
 
-    const fetchExpenses = async () => {
-        try {
-          const res = await fetch(
-            `https://expense-tracker-app-34f7d-default-rtdb.firebaseio.com/Expenses.json`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
-          const data = await res.json();
-          console.log(data);
-          if (res.ok) {
-            const newData = [];
-            for (let key in data) {
-              newData.push({ id: key, ...data[key] });
-              console.log(data[key].category)
-            }
-            setExpenses(newData);
-          } else {
-            throw data.error;
-          }
-        } catch (err) {
-          alert(err.message);
-        }
-      };
-      useEffect(() => {
-        fetchExpenses()
-      },[])
+  function onAmountHandler(event) {
+    setAmount(event.target.value);
+  }
 
-      const addExpenseHandler = async (event) => {
-        event.preventDefault();
-     const obj = {
-      amount: amountInputRef.current.value,
-      description: descriptionInputRef.current.value,
-      category: categoryInputRef.current.value,
-    };
-    try {
-      const res = await fetch(
-        `https://expense-tracker-app-34f7d-default-rtdb.firebaseio.com/Expenses.json`,
-        {
-            method: "Post",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(obj),
-          }
-        );
-        const data = await res.json()
-        if(res.ok){
-          alert('Expenses are added successfully')
-          amountInputRef.current.value = ''
-          descriptionInputRef.current.value = ''
-          categoryInputRef.current.value = ''
-          await fetchExpenses()
-        }else{
-          throw data.error
-        }
-  
-      } catch (err) {
-        console.log(err.message);
-      }
+  function onDescriptionHandler(event) {
+    setDescription(event.target.value);
+  }
+
+  const onCategoryHandler = (e) => {
+    setCategory(e.target.value);
   };
 
+  const submitHandler = (e) => {
+    e.preventDefault();
+    const auth = authCtx.email
+    console.log(auth);
+    const replaceEmail = auth.replace('.', '')
+
+    if (!isEditing) {
+      fetch(`https://expensetracker-a2389-default-rtdb.asia-southeast1.firebasedatabase.app/${replaceEmail}.json`, {
+        method: 'POST',
+        body: JSON.stringify({ amount: amount, description: description, category: category }),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      })
+      alert('Your Item added Successfully')
+    } else {
+      fetch(`https://expensetracker-a2389-default-rtdb.asia-southeast1.firebasedatabase.app/${authreplaced}/${id}.json`, {
+        method: "PUT",
+        body: JSON.stringify({
+          amount: amount,
+          category: category,
+          description: description,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).then((res) => {
+        alert("please Update Your Expence")
+      });
+      setisEditting(false)
+    }
+  }
+  const auth = authCtx.email;
+  const authreplaced = auth.replace('.', '');
+
+  let UserData = [];
+  useEffect(() => {
+
+    fetch(`https://expensetracker-a2389-default-rtdb.asia-southeast1.firebasedatabase.app/${authreplaced}.json`, {
+      method: 'GET',
+    }).then(async (res) => {
+      const res_1 = await res.json();
+      // console.log(res)
+      for (const key in res_1) {
+
+        UserData.push({
+          id: key,
+
+          amount: res_1[key].amount,
+          description: res_1[key].description,
+          category: res_1[key].category,
+        });
+      }
+      setUserData(UserData);
+    })
+  }, [UserData, authreplaced])
+
+  const toDeleteDataHandler = (id) => {
+    // console.log(id)
+    fetch(`https://expensetracker-a2389-default-rtdb.asia-southeast1.firebasedatabase.app/${authreplaced}/${id}.json`, {
+      method: 'DELETE',
+    }).then((res) => {
+      if (res.ok) {
+        alert("Your Item Delete Please Refresh The Page")
+      }
+    })
+  }
+  const editHandlerHandler = (id, amount1, category1, description1) => {
+    setId(id)
+    setAmount(amount1);
+    setCategory(category1)
+    setDescription(description1);
+    setisEditting(true)
+  }
+  const cancelHandler = ()=> {
+    setisEditting(false)
+    setAmount('');
+    setCategory('')
+    setDescription('');
+  }
   return (
-    <div>
-        <div>
-        <form className="form-expenses" onSubmit={addExpenseHandler}>
-        <label htmlFor="amount">Amount</label>
-          <input type="number" id="amount" required ref={amountInputRef} />
-          <label htmlFor="desc">Description</label>
-          <textarea
-            type="text"
-            id="des"
-            rows="3"
+    <div className="expense-tracker">
+      <h1 className='heading'>Expense Tracker</h1>
+      <form className='expenses-form' onSubmit={submitHandler}>
+          <label htmlFor="amount">Amount</label>
+          <input
+            type="number"
+            id="amount"
+            name="amount"
+            value={amount}
+            onChange={onAmountHandler}
             required
-            ref={descriptionInputRef}
           />
-          <label htmlFor="cat">Choose One</label>
-          <select id="cat" ref={categoryInputRef}>
-            <option value="food">Food</option>
-            <option value="Shopping">Shopping</option>
-            <option value="Rent">Rent</option>
-            <option value="Others">Others</option>
+          <label htmlFor="description">Description</label>
+          <input
+            type="text"
+            id="description"
+            name="description"
+            value={description}
+            onChange={onDescriptionHandler}
+            required
+          />
+          <label htmlFor="category">Category</label>
+          <select id="category" name="category" value={category} onChange={onCategoryHandler} required>
+            <option value="">Select a category</option>
+            <option value="Food">Food</option>
+            <option value="Electricity">Electricity</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Furniture">Furniture</option>
+            <option value="Other">Other</option>
           </select>
-          <button type="submit">Submit</button>
-        </form>
-      </div>
-      <div className="expenses-list">
-        <h5>All Expenses</h5>
-        {expenses.map((expense) => {
-            return (<ExpensesItem key={expense.id} item={expense}/>)
+        <button type="submit">Add Expense</button>
+        {isEditing && <button type="button" onClick={cancelHandler}>Cancel</button>}
+      </form>
+      <h2 className='heading'>Expenses</h2>
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>S.No</th>
+            <th>Amount</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Edit</th>
+            <th >Delete</th>
+          </tr>
+        </thead>
+
+        {data.map((currvalue, index) => {
+          return <tbody>
+            <tr>
+              <td>{index + 1}</td>
+
+              <td>{currvalue.amount}</td>
+              <td>{currvalue.category}</td>
+              <td>{currvalue.description}</td>
+              <td>
+                <button
+                  type="button"
+                  className="btn btn-warning"
+                  onClick={editHandlerHandler.bind(null,
+                    currvalue.id,
+                    currvalue.amount,
+                    currvalue.category,
+                    currvalue.description,
+                  )} >
+                  Edit
+
+                </button>
+              </td>
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={toDeleteDataHandler.bind(null,
+                  currvalue.id)}
+              >
+                Delete
+              </button>
+            </tr>
+          </tbody>
         })}
-      </div>
+
+      </Table>
     </div>
   );
 };
+
 export default Expenses;
