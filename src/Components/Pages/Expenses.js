@@ -1,120 +1,160 @@
-import { useState, useEffect, useContext } from 'react';
-import AuthContext from '../Store/AuthContext';
-import { Table } from 'react-bootstrap';
-import './Expenses.css';
+import { useState, useRef, useEffect } from 'react';
+//import AuthContext from '../Store/AuthContext';
+import ExpenseItem from './ExpenseItem';
+import { useSelector,useDispatch } from 'react-redux';
+import { expenseAction } from '../Store/ExpenseReducer';
+
 
 const Expenses = () => {
-  const authCtx = useContext(AuthContext);
-  const [data, setUserData] = useState([]);
-  const [amount, setAmount] = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('');
+
   const [id, setId] = useState(null);
-  const [isEditing, setisEditting] = useState(false);
+  const [editAmount, setEditAmount] = useState(null)
+  const dispatch = useDispatch();
+  const inputAmountRef = useRef();
+  const inputDescRef = useRef();
+  const inputCatRef = useRef();
+  const expenses = useSelector(state => state.expense.expenses);
+  const totalAmount = useSelector(state => state.expense.totalAmount);
+  const email = useSelector(state=> state.auth.email);
+  const isEditing = useSelector(state=>state.expense.isEditing);
+  const expenseEmail = email.replace('.','');
 
-  function onAmountHandler(event) {
-    setAmount(event.target.value);
-  }
-
-  function onDescriptionHandler(event) {
-    setDescription(event.target.value);
-  }
-
-  const onCategoryHandler = (e) => {
-    setCategory(e.target.value);
+  const deleteHandler = (item)=> {
+    const updatedExpenses = expenses.filter((expense)=> { return expense.id !== item.id });
+    const updatedTotalAmount = Number(totalAmount) - Number(item.amount);
+    dispatch(expenseAction.removeExpense({
+      expenses: updatedExpenses,
+      totalAmount: updatedTotalAmount
+    }))
   };
 
-  const submitHandler = (e) => {
-    e.preventDefault();
-    const auth = authCtx.email
-    console.log(auth);
-    const replaceEmail = auth.replace('.', '')
+  const editExpeseHandler = (item)=> {
+    dispatch(expenseAction.editing(true))
+    setId(item.id);
+    setEditAmount(item.amount)
+    inputAmountRef.current.value= item.amount
+    inputDescRef.current.value= item.description
+    inputCatRef.current.value = item.category
+  };
 
-    if (!isEditing) {
-      fetch(`https://expensetracker-a2389-default-rtdb.asia-southeast1.firebasedatabase.app/${replaceEmail}.json`, {
+  const addExpenseHandler = async(event) => {
+    event.preventDefault();
+    const obj = {
+      amount: inputAmountRef.current.value,
+      description: inputDescRef.current.value,
+      category: inputCatRef.current.value
+    }
+    
+    if(isEditing){
+      try{
+        const res = await fetch(`https://expensetracker-a2389-default-rtdb.asia-southeast1.firebasedatabase.app/${expenseEmail}/${id}.json`, {
+          method: 'PUT',
+          body : JSON.stringify(obj),
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+        const data = await res.json();
+        if(res.ok){
+          alert('Expenses updated successfully!');
+          const editData = {...obj}
+          dispatch(expenseAction.addExpense({
+            expenses: editData,
+            totalAmount: editData.amount - Number(editAmount),
+          }));
+          dispatch(expenseAction.editing(false));
+        }else{
+          throw data.error;
+        }
+      }catch(e){
+        console.log(e);
+    }
+    }
+    else{
+    try{
+      const res = await fetch(`https://expensetracker-a2389-default-rtdb.asia-southeast1.firebasedatabase.app/${expenseEmail}.json`,{
         method: 'POST',
-        body: JSON.stringify({ amount: amount, description: description, category: category }),
+        body: JSON.stringify(obj),
         headers: {
-          'Content-Type': 'application/json'
-        },
-      })
-      alert('Your Item added Successfully')
-    } else {
-      fetch(`https://expensetracker-a2389-default-rtdb.asia-southeast1.firebasedatabase.app/${authreplaced}/${id}.json`, {
-        method: "PUT",
-        body: JSON.stringify({
-          amount: amount,
-          category: category,
-          description: description,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }).then((res) => {
-        alert("please Update Your Expence")
+          'Contetnt-Type':'application/json'
+        }
       });
-      setisEditting(false)
+      const data = await res.json();
+      if(res.ok){
+        alert('Expense Added Successfully');
+        const newData = {...obj}
+        dispatch(expenseAction.addExpense({
+          expenses: newData,
+          totalAmount: newData.amount
+        }));
+    }else{
+      throw data.error;
+    }
+    }catch(e){
+      console.log(e);
     }
   }
-  const auth = authCtx.email;
-  const authreplaced = auth.replace('.', '');
-
-  let UserData = [];
+    inputAmountRef.current.value=""
+    inputDescRef.current.value=""
+    inputCatRef.current.value=""
+  }
+  const newdata = [];
   useEffect(() => {
+    async function fetchExpenses(){
+    try {
+      const res = await fetch(
+        `https://expensetracker-a2389-default-rtdb.asia-southeast1.firebasedatabase.app/${expenseEmail}.json`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    fetch(`https://expensetracker-a2389-default-rtdb.asia-southeast1.firebasedatabase.app/${authreplaced}.json`, {
-      method: 'GET',
-    }).then(async (res) => {
-      const res_1 = await res.json();
-      // console.log(res)
-      for (const key in res_1) {
+      const data = await res.json();
 
-        UserData.push({
-          id: key,
-
-          amount: res_1[key].amount,
-          description: res_1[key].description,
-          category: res_1[key].category,
-        });
-      }
-      setUserData(UserData);
-    })
-  }, [UserData, authreplaced])
-
-  const toDeleteDataHandler = (id) => {
-    // console.log(id)
-    fetch(`https://expensetracker-a2389-default-rtdb.asia-southeast1.firebasedatabase.app/${authreplaced}/${id}.json`, {
-      method: 'DELETE',
-    }).then((res) => {
       if (res.ok) {
-        alert("Your Item Delete Please Refresh The Page")
+        let updatedtotalAmount =0;
+        
+        for (let key in data) {
+          newdata.push({ id: key, ...data[key] });
+          updatedtotalAmount += Number(data[key].amount)
+        }
+        dispatch(
+        expenseAction.replaceExpenses({
+          expenses : newdata,
+          totalAmount : updatedtotalAmount
+        })
+        )
+
+      } else {
+        throw data.error;
       }
-    })
+    } catch (error) {
+      console.log(error.message);
+    }
   }
-  const editHandlerHandler = (id, amount1, category1, description1) => {
-    setId(id)
-    setAmount(amount1);
-    setCategory(category1)
-    setDescription(description1);
-    setisEditting(true)
-  }
-  const cancelHandler = ()=> {
-    setisEditting(false)
-    setAmount('');
-    setCategory('')
-    setDescription('');
-  }
+
+  fetchExpenses()
+   }, [dispatch,expenseEmail, newdata]);
+
+   const cancelHandler = ()=>{
+    dispatch(expenseAction.editing(false));
+    inputAmountRef.current.value=""
+    inputDescRef.current.value=""
+    inputCatRef.current.value=""
+   }
   return (
     <div className="expense-tracker">
       <h1 className='heading'>Expense Tracker</h1>
-      <form className='expenses-form' onSubmit={submitHandler}>
+      <form className='expenses-form' onSubmit={addExpenseHandler}>
           <label htmlFor="amount">Amount</label>
           <input
             type="number"
             id="amount"
             name="amount"
-            value={amount}
-            onChange={onAmountHandler}
+           ref={inputAmountRef}
             required
           />
           <label htmlFor="description">Description</label>
@@ -122,12 +162,11 @@ const Expenses = () => {
             type="text"
             id="description"
             name="description"
-            value={description}
-            onChange={onDescriptionHandler}
+            ref={inputDescRef}
             required
           />
           <label htmlFor="category">Category</label>
-          <select id="category" name="category" value={category} onChange={onCategoryHandler} required>
+          <select id="category" name="category" ref={inputCatRef} required>
             <option value="">Select a category</option>
             <option value="Food">Food</option>
             <option value="Electricity">Electricity</option>
@@ -139,54 +178,20 @@ const Expenses = () => {
         {isEditing && <button type="button" onClick={cancelHandler}>Cancel</button>}
       </form>
       <h2 className='heading'>Expenses</h2>
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>S.No</th>
-            <th>Amount</th>
-            <th>Category</th>
-            <th>Description</th>
-            <th>Edit</th>
-            <th >Delete</th>
-          </tr>
-        </thead>
+      <div className="expenses-list">
+            {expenses.map((expense) => (
+              <ExpenseItem
+              key={expense.id}
+                id={expense.id}
+                item={expense}
+                deleteItem={deleteHandler}
+                editItem={editExpeseHandler}
+              />
+            ))}
 
-        {data.map((currvalue, index) => {
-          return <tbody>
-            <tr>
-              <td>{index + 1}</td>
-
-              <td>{currvalue.amount}</td>
-              <td>{currvalue.category}</td>
-              <td>{currvalue.description}</td>
-              <td>
-                <button
-                  type="button"
-                  className="btn btn-warning"
-                  onClick={editHandlerHandler.bind(null,
-                    currvalue.id,
-                    currvalue.amount,
-                    currvalue.category,
-                    currvalue.description,
-                  )} >
-                  Edit
-
-                </button>
-              </td>
-              <button
-                type="button"
-                className="btn btn-danger"
-                onClick={toDeleteDataHandler.bind(null,
-                  currvalue.id)}
-              >
-                Delete
-              </button>
-            </tr>
-          </tbody>
-        })}
-
-      </Table>
-    </div>
+            <div className='totalAmount'>Total Amount :{totalAmount}</div>
+          </div>
+      </div>
   );
 };
 
