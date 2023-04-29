@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-//import './ExpenseItem.css'
+import './ExpenseItem.css'
 
 const ExpenseItem = (props) => {
     const email = useSelector(state => state.auth.email);
@@ -38,9 +38,9 @@ const ExpenseItem = (props) => {
 
     return (<>
         <li className='list'> 
-        <b>Category</b> :-{props.item.category} 
-        <b>Amount</b>:-${props.item.amount} 
-        <b>Description</b>:-{props.item.description} 
+        <b className='b1'>Category</b> :- {props.item.category}; 
+        <b className='b2'>Amount</b> :- ${props.item.amount}; 
+        <b className='b3'>Description</b> :- {props.item.description} 
         <button className='edit-button' onClick={editHandler}>Edit</button> 
         <button className='delete-button' onClick={deleteHandler}>Delete</button> 
         </li>

@@ -101,10 +101,10 @@ const Profile = () => {
 
   return (
     <>
-      <h4  style={{ textAlign: "left" }}>
+      <h4  style={{ textAlign: "center" }}>
         Winners Never Quit, Quitters Never Win
         </h4>
-      <p style={{ textAlign: "right" }}>
+      <p style={{ textAlign: "center" }}>
         Your Profile is 64% complete, A complete profile has higher chances to
         land a job <Link to="/profile">Complete now</Link>
       </p>
