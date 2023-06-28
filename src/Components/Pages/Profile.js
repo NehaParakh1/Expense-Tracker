@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef,useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 import classes from "./Profile.module.css";
@@ -11,6 +11,7 @@ const Profile = () => {
   const submitHandler = async (event) => {
     event.preventDefault()
     console.log("Submit");
+
     const enteredName = nameInputRef.current.value;
     const enteredPhotoUrl = photoInputRef.current.value;
     const idToken = localStorage.getItem("token")
@@ -34,12 +35,35 @@ const Profile = () => {
       console.log(data);
       if(res.ok){
         alert("Date Updated Successfully")
-        history.replace('/home')
+       // history.replace('/home')
       }
     } catch (err) {
       alert(err.message);
     }
   };
+
+  useEffect(() => {
+    async function getData() {
+      try {
+        const res = await fetch(
+          "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyCL88vedXWOxULmjMSR9-1BKz0CXh_xbIg",{
+            method: "POST",
+            body: JSON.stringify({
+                idToken: localStorage.getItem("token")
+            })
+          }
+        );
+        const data = await res.json()
+        nameInputRef.current.value = data.users[0].displayName
+        photoInputRef.current.value = data.users[0].photoUrl
+        console.log(data)
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+    getData()
+  }, []);
+
   return (
     <>
       <h4>Winners Never Quit, Quitters Never Win</h4>
