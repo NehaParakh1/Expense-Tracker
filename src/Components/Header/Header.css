@@ -1,19 +1,31 @@
-
-.nav-item{
-
-        background-color: #333;
-        color: #f2f2f2;
-        overflow: hidden;
-        padding: 14px 16px;
-        margin: 5px;
-      text-decoration: none;
-}   
-Link{
-    text-decoration: none;
+.navbar{
+  background-color: rgb(243, 236, 227);
+  height: 100px;
 }
+
+.navbar h2{
+  margin-left: 10px;
+  color:#2e4450;
+}
+
+.nav-item {
+  border: 1px solid rgb(41, 115, 189);
+  border-radius: 10px;
+  background-color: #3e94c2;
+  color: #4c4949;
+  padding: 3px 3px;
+  margin: 3px;
+display:flex;
+justify-content: center;
+align-items: center;
+}  
+
+.nav-link{
+  text-decoration: none;
+ 
+}
+
 
 .logout{
   margin:9px;
-  
-
 }

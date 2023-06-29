@@ -29,7 +29,7 @@ const Expenses = () => {
     }))
   };
 
-  const editExpeseHandler = (item)=> {
+  const editExpenseHandler = (item)=> {
     dispatch(expenseAction.editing(true))
     setId(item.id);
     setEditAmount(item.amount)
@@ -186,7 +186,7 @@ const Expenses = () => {
                 id={expense.id}
                 item={expense}
                 deleteItem={deleteHandler}
-                editItem={editExpeseHandler}
+                editItem={editExpenseHandler}
               />
             ))}
 
