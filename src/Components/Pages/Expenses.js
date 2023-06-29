@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import ExpenseItem from './ExpenseItem';
 import { useSelector,useDispatch } from 'react-redux';
 import { expenseAction } from '../Store/ExpenseReducer';
+import './Expenses.css'
 
 
 const Expenses = () => {

@@ -1,0 +1,27 @@
+.list{
+    margin: 30px;
+    
+}
+
+.b2{
+    margin-left: 10px;
+}
+.b3{
+    margin-left: 10px;
+}
+
+.list button{
+    cursor: pointer;
+    margin: 2px;
+    padding: 2px 4px;
+    color: white;
+    border-radius: 5px;
+    float: right;
+}
+
+.delete-button{
+   background-color: red;
+}
+.edit-button{
+    background-color: green;
+}
