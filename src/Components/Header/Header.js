@@ -1,12 +1,16 @@
-import { useContext } from 'react';
+
 import {Button} from 'react-bootstrap'
-import AuthContext from '../Store/AuthContext';
+import { useSelector,useDispatch } from 'react-redux';
+import { authActions } from '../Store/AuthReducers';
 import { Link } from 'react-router-dom';
 
+
 const Header = () => {
-  const authCtx = useContext(AuthContext)
+  const dispatch=useDispatch();
+  const isLoggedIn=useSelector(state=>state.auth.isAuthenticated)
+  const totalAmount=useSelector(state=>state.expense.totalAmount)
   const logoutHandler = () => {
-    authCtx.logout();
+   dispatch(authActions.logout()) 
   }
     return(
             <>
@@ -19,9 +23,10 @@ const Header = () => {
                     <li className="nav-item bg-light">Products</li>
                     <li className="nav-item bg-light" >About Us</li>
                   </ul>
-                   {authCtx.isLoggedIn &&<Button onClick={logoutHandler}>
+                   {isLoggedIn &&<Button onClick={logoutHandler}>
                     Logout
                   </Button>}
+                  {totalAmount>10000 && isLoggedIn && <Button> Premium </Button>}
                 </div>
               </nav>
               <hr/>

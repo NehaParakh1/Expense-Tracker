@@ -1,11 +1,14 @@
-import React, { useContext, useRef, useState } from "react";
-import AuthContext from "../Store/AuthContext"
+import React, { useRef, useState } from "react";
+//import AuthContext from "../Store/AuthContext"
 import classes from "./Login.module.css";
 import { useHistory,Link } from "react-router-dom";
+import { authActions } from "../Store/AuthReducers";
+import { useDispatch } from "react-redux";
 
 const Login = () => {
     const history = useHistory()
-  const authCtx = useContext(AuthContext);
+    const dispatch=useDispatch();
+
   const emailInputRef = useRef("");
   const passwordInputRef = useRef("");
   const conPasswordInputRef = useRef("");
@@ -16,13 +19,21 @@ const Login = () => {
     setIsLogin((prevState) => !prevState);
   };
 
-  const submitHandler = (event) => {
+  const submitHandler = async (event) => {
     event.preventDefault();
 
     const enteredEmail = emailInputRef.current.value;
     const enteredPassword = passwordInputRef.current.value;
     const enteredConPassword = conPasswordInputRef.current.value;
+    
+    if (!isLogin) {
+      if (enteredPassword !== enteredConPassword) {
+        return alert("Password and the confirm password is not same");
+      }
+    }
+    
     setIsLoading(true);
+
     let url;
     if (isLogin) {
       url =
@@ -33,7 +44,9 @@ const Login = () => {
         "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCL88vedXWOxULmjMSR9-1BKz0CXh_xbIg";
       console.log("User has successfully signed up");
     }
-    fetch(url, {
+    try{
+
+    const res= await fetch(url, {
       method: "POST",
       body: JSON.stringify({
         email: enteredEmail,
@@ -45,28 +58,38 @@ const Login = () => {
         "Content-Type": "application/json",
       },
     })
-      .then((res) => {
-        setIsLoading(false);
-        if (res.ok) {
-          return res.json();
-        } else {
-          let errorMessage = "Authentication failed";
-          // if(data && data.error && data.error.message){
-          //   errorMessage = data.error.message
-          // }
-          throw new Error(errorMessage);
-        }
-      })
-      .then((data) => {
-        authCtx.login(data.idToken);
-        history.replace('/home')
-        console.log(data.idToken);
-      })
-      .catch((err) => {
-        alert(err.message);
-        console.log(err.message);
-      });
-  };
+    if (res.ok) {
+      setIsLogin(true);
+      const data = await res.json();
+      const userEmailId = data.email;
+     
+     dispatch(authActions.login ({token:data.idToken, email:data.email}));
+
+
+   
+     
+      console.log(data.idToken);
+
+      emailInputRef.current.value = "";
+      passwordInputRef.current.value = "";
+
+      if (!isLogin) {
+        conPasswordInputRef.current.value = "";
+        alert("Signup successful");
+        history.replace("/home");
+      } else {
+        alert("Login Successful");
+        history.replace("/home");
+      }
+    } else {
+      setIsLoading(false)
+      const data = await res.json();
+      throw data.error;
+    }
+  } catch (err) {
+    console.log(err.message);
+  }
+};
 
   return (
     <section className={classes.auth}>
