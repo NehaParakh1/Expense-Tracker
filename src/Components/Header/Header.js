@@ -28,10 +28,10 @@ const Header = () => {
                 <div className="collapse navbar-collapse justify-content-between">
                   <h2>Expense Tracker</h2>
                   <ul className="navbar-nav mx-auto ">
-                  <li className="nav-item"><Link to="/home">Home</Link></li>
-            <li className='nav-item'><Link to='/expenses'>Expenses</Link></li>
-                    <li className="nav-item">Products</li>
-                    <li className="nav-item" >About Us</li>
+                  <li className="nav-item"><Link to="/home" className="nav-link">Home</Link></li>
+            <li className='nav-item'><Link to='/expenses' className="nav-link">Expenses</Link></li>
+                    <li className="nav-item products">Products</li>
+                    <li className="nav-item aboutus" >About Us</li>
                   </ul>
                    {isLoggedIn &&<Button className='logout' onClick={logoutHandler}>
                     Logout
@@ -39,7 +39,7 @@ const Header = () => {
                   {totalAmount>10000 && isLoggedIn && <Button onClick={activatePremiumHandler}> Premium </Button>}
                 </div>
               </nav>
-              <hr/>
+           
             </>
           );
         };
