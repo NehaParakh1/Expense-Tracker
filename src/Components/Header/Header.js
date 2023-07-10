@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect,useRef } from "react";
 import { Button } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { authActions } from "../Store/AuthReducers";
@@ -25,6 +25,23 @@ const Header = () => {
     setIsNavbarOpen(!isNavbarOpen);
   };
 
+  
+  const navbarRef = useRef(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (navbarRef.current && !navbarRef.current.contains(event.target)) {
+        setIsNavbarOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, []);
+
   return (
     <>
       <nav className="navbar navbar-expand-lg variant-dark">
@@ -38,7 +55,8 @@ const Header = () => {
         >
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div className={`collapse navbar-collapse ${isNavbarOpen ? 'show' : ''}`}>
+        <div className={`collapse navbar-collapse ${isNavbarOpen ? 'show' : ''}`}
+        ref={navbarRef}>
           <h2>Expense Tracker</h2>
           <ul className="navbar-nav mx-auto ">
             <li className="nav-item">
@@ -51,8 +69,6 @@ const Header = () => {
                 Expenses
               </Link>
             </li>
-            <li className="nav-item products">Products</li>
-            <li className="nav-item aboutus">About Us</li>
           </ul>
 
           {isLoggedIn && (
