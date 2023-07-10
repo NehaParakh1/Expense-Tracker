@@ -54,6 +54,7 @@
   .totalAmount{
     text-align: center;
     font-weight: bold;
+    color: #444444;
   }
 
   @media (max-width: 768px) {
