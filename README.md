@@ -1,70 +1,36 @@
-# Getting Started with Create React App
+# Expense Tracker
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+The Expense Tracker App is a user-specific application built using React and Redux. It helps users track their expenses and provides a premium feature that allows them to change the app theme between dark and light modes. Additionally, users can download their expense data for further analysis.
 
-## Available Scripts
+# Features
 
-In the project directory, you can run:
+1. Each user has their own expense tracking functionality, ensuring privacy and personalized data management.
+2. Users can log their expenses, including details such as category, description, and amount spent.
+3. When the total expense amount exceeds 10,000, users gain access to a premium feature that allows them to switch between dark and light app themes.
+4. In premium feature, user can also download their expense data, enabling further analysis orrecord keeping.
 
-### `npm start`
+# Technologies Used
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. React
+2. Redux
+3. HTML
+4. CSS
+5. RESTful APIs
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+# Usage
 
-### `npm test`
+1. Sign in with your credentials or create a new account if you don't have one.
+2. Navigate through the app to log your expenses.
+3. If your total expenses exceed 10,000, you will gain access to the premium feature that allows you to switch between dark and light themes and also download the expense data.
+4. Analyze your spending patterns, manage your expenses effectively, and enjoy the convenience of the Expense Tracker App.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+# Demo
 
-### `npm run build`
+https://expense-tracker-beta-two.vercel.app/
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+# Images of app
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+![screenshot](screenshot/Screenshot1.png)
+![screenshot](screenshot/Screenshot2.png)
+![screenshot](screenshot/Screenshot3.png)
+![screenshot](screenshot/Screenshot4.png)
