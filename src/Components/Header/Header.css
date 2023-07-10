@@ -1,6 +1,7 @@
 .navbar{
   background-color: rgb(243, 236, 227);
   height: 100px;
+
 }
 
 .navbar h2{
@@ -29,3 +30,8 @@ align-items: center;
 .logout{
   margin:9px;
 }
+
+
+
+    
+  
